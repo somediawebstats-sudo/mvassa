@@ -1,4 +1,6 @@
-<title>Mvassa Le Rocher</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Mvassa Le Rocher · Photos</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=Instrument+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
@@ -32,6 +34,10 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 .brand b{font-family:var(--f-display);font-weight:800;font-size:22px;letter-spacing:-.02em}
 .brand span{font-family:var(--f-mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--wall)}
 .top nav{display:flex;gap:10px;align-items:center}
+.switch{display:inline-flex;padding:3px;border-radius:999px;border:1px solid var(--line);background:rgba(12,31,38,.35);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
+.switch a{font:500 13px/1 var(--f-body);text-decoration:none;padding:8px 12px;border-radius:999px;color:var(--sand-dim);transition:background .2s,color .2s}
+.switch a:hover{color:var(--sand)}
+.switch a[aria-current]{background:var(--sand);color:var(--ink)}
 .btn{display:inline-flex;align-items:center;gap:8px;font:500 14px/1 var(--f-body);text-decoration:none;padding:11px 16px;border-radius:999px;border:1px solid var(--line);background:rgba(12,31,38,.35);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);transition:background .2s,border-color .2s}
 .btn:hover{border-color:var(--sand)}
 .btn.solid{background:var(--shutter);border-color:var(--shutter);color:#fff}
@@ -103,6 +109,7 @@ footer{padding-block:28px;padding-left:max(24px,env(safe-area-inset-left,0px));p
   .top{padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
   .brand span{display:none}
   .top nav .btn:not(.solid){display:none}
+  .switch a{padding:7px 10px;font-size:12px}
   .cap{padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
   .rail{display:none}
   .bar{display:flex;position:absolute;z-index:3;left:max(16px,env(safe-area-inset-left,0px));right:max(16px,env(safe-area-inset-right,0px));top:calc(env(safe-area-inset-top,0px) + 72px);gap:4px}
@@ -118,6 +125,7 @@ footer{padding-block:28px;padding-left:max(24px,env(safe-area-inset-left,0px));p
 <header class="top">
   <a class="brand" href="#top"><b>Le Rocher</b><span>Mvassa</span></a>
   <nav>
+    <div class="switch" role="group" aria-label="Version du site"><a href="index.html">Vidéo</a><a href="photos.html" aria-current="page">Photos</a></div>
     <a class="btn" href="https://my.matterport.com/show/?m=r2jwHmgH1ga" target="_blank" rel="noopener">Visite 3D ↗</a>
     <a class="btn solid" href="#sejour">Réserver</a>
   </nav>

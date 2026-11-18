@@ -1,0 +1,275 @@
+<title>Mvassa Le Rocher</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=Instrument+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout : une scène plein écran collée (sticky) ; le scroll fait avancer la caméra d'un point de vue au suivant, comme une balade dans la visite 3D. */
+:root{
+  --ink:#0c1f26;        /* mer profonde, fond */
+  --ink-2:#14313b;
+  --sand:#f3ebe1;       /* texte */
+  --sand-dim:rgba(243,235,225,.74);
+  --shutter:#3a97dc;    /* bleu des volets */
+  --wall:#dba48f;       /* ocre rose des murs */
+  --line:rgba(243,235,225,.18);
+  --f-display:"Bricolage Grotesque", "Avenir Next", system-ui, sans-serif;
+  --f-body:"Instrument Sans", "Helvetica Neue", system-ui, sans-serif;
+  --f-mono:"IBM Plex Mono", ui-monospace, Menlo, monospace;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:auto}
+body{background:var(--ink);color:var(--sand);font-family:var(--f-body);font-size:16px;line-height:1.55;-webkit-font-smoothing:antialiased}
+a{color:inherit}
+:focus-visible{outline:2px solid var(--shutter);outline-offset:3px;border-radius:4px}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:30;background:var(--ink)}
+
+/* ---------- En-tête ---------- */
+.top{position:fixed;top:env(safe-area-inset-top,0px);left:0;right:0;z-index:20;display:flex;align-items:center;justify-content:space-between;gap:16px;
+  padding-block:18px;padding-left:max(24px,env(safe-area-inset-left,0px));padding-right:max(24px,env(safe-area-inset-right,0px));
+  background:linear-gradient(to bottom,rgba(12,31,38,.55),rgba(12,31,38,0))}
+.brand{display:flex;align-items:baseline;gap:10px;text-decoration:none}
+.brand b{font-family:var(--f-display);font-weight:800;font-size:22px;letter-spacing:-.02em}
+.brand span{font-family:var(--f-mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--wall)}
+.top nav{display:flex;gap:10px;align-items:center}
+.btn{display:inline-flex;align-items:center;gap:8px;font:500 14px/1 var(--f-body);text-decoration:none;padding:11px 16px;border-radius:999px;border:1px solid var(--line);background:rgba(12,31,38,.35);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);transition:background .2s,border-color .2s}
+.btn:hover{border-color:var(--sand)}
+.btn.solid{background:var(--shutter);border-color:var(--shutter);color:#fff}
+.btn.solid:hover{background:#2c86cb}
+
+/* ---------- Balade ---------- */
+.tour{position:relative}
+.stage{position:sticky;top:0;height:100vh;height:100svh;overflow:hidden;background:var(--ink)}
+.shot{position:absolute;inset:-6%;background-size:cover;background-position:center;will-change:transform,opacity;opacity:0}
+.shot:first-child{opacity:1}
+.stage::after{content:"";position:absolute;inset:0;pointer-events:none;
+  background:linear-gradient(to top,rgba(12,31,38,.88) 0%,rgba(12,31,38,.25) 38%,rgba(12,31,38,0) 60%),
+             radial-gradient(120% 90% at 50% 40%,transparent 55%,rgba(12,31,38,.45) 100%)}
+
+.caps{position:absolute;inset:0;z-index:2;pointer-events:none}
+.cap{position:absolute;left:0;right:0;bottom:0;padding-bottom:clamp(40px,9vh,96px);
+  padding-left:max(24px,env(safe-area-inset-left,0px));padding-right:max(24px,env(safe-area-inset-right,0px));opacity:0}
+.cap:first-child{opacity:1}
+.cap-in{max-width:620px}
+.cap .k{font-family:var(--f-mono);font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--wall);display:flex;gap:12px;align-items:center}
+.cap .k::before{content:"";width:28px;height:1px;background:currentColor}
+.cap h2{font-family:var(--f-display);font-weight:800;font-size:clamp(36px,6.2vw,76px);line-height:.96;letter-spacing:-.03em;margin:14px 0 14px;text-wrap:balance}
+.cap p{margin:0;font-size:clamp(16px,1.35vw,19px);color:var(--sand-dim);max-width:52ch}
+.cap.hero h2{font-size:clamp(46px,9vw,124px)}
+.hint{margin-top:26px;font-family:var(--f-mono);font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--sand-dim);display:flex;gap:10px;align-items:center}
+.hint i{width:1px;height:34px;background:linear-gradient(var(--sand),transparent);animation:drip 1.8s ease-in-out infinite}
+@keyframes drip{0%{transform:scaleY(.2);transform-origin:top}50%{transform:scaleY(1);transform-origin:top}100%{transform:scaleY(.2);transform-origin:bottom}}
+
+/* Parcours : la liste des points de vue */
+.rail{position:absolute;z-index:3;right:max(24px,env(safe-area-inset-right,0px));top:50%;transform:translateY(-50%);list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:4px}
+.rail li{display:flex;justify-content:flex-end}
+.rail button{all:unset;cursor:pointer;display:flex;align-items:center;justify-content:flex-end;gap:12px;padding:6px 0;font:500 12px/1 var(--f-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--sand-dim)}
+.rail button span{opacity:0;transform:translateX(6px);transition:opacity .25s,transform .25s}
+.rail button:hover span,.rail button:focus-visible span,.rail li.on span{opacity:1;transform:none}
+.rail button em{font-style:normal;width:26px;text-align:right;font-variant-numeric:tabular-nums}
+.rail button::after{content:"";width:8px;height:8px;border-radius:50%;border:1px solid var(--sand-dim);transition:all .25s}
+.rail li.on button{color:var(--sand)}
+.rail li.on button::after{background:var(--shutter);border-color:var(--shutter);transform:scale(1.35)}
+.bar{display:none}
+
+/* ---------- Visite libre ---------- */
+.free{position:relative;padding-block:clamp(72px,12vh,140px);padding-left:max(24px,env(safe-area-inset-left,0px));padding-right:max(24px,env(safe-area-inset-right,0px));background:var(--ink)}
+.free-in{max-width:1180px;margin:0 auto;display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:clamp(28px,5vw,72px);align-items:center}
+.eyebrow{font-family:var(--f-mono);font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--wall)}
+.free h3,.stay h3{font-family:var(--f-display);font-weight:800;font-size:clamp(32px,4.4vw,54px);line-height:1;letter-spacing:-.03em;margin:12px 0 16px;text-wrap:balance}
+.free p{color:var(--sand-dim);margin:0 0 24px;max-width:46ch}
+.portal{position:relative;display:block;aspect-ratio:16/10;max-width:100%;border-radius:18px;overflow:hidden;text-decoration:none;background:#000 url(img/s3.jpg) center/cover;isolation:isolate}
+.portal::before{content:"";position:absolute;inset:0;background:linear-gradient(to top,rgba(12,31,38,.85),rgba(12,31,38,.1) 60%);z-index:-1}
+.portal .play{position:absolute;left:50%;top:46%;transform:translate(-50%,-50%);width:84px;height:84px;border-radius:50%;background:rgba(243,235,225,.16);border:1px solid rgba(243,235,225,.6);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);display:grid;place-items:center;transition:transform .3s,background .3s}
+.portal:hover .play{transform:translate(-50%,-50%) scale(1.08);background:var(--shutter);border-color:var(--shutter)}
+.portal .play svg{width:30px;height:30px}
+.portal .lbl{position:absolute;left:22px;right:22px;bottom:20px;display:flex;justify-content:space-between;align-items:flex-end;gap:12px;flex-wrap:wrap}
+.portal .lbl b{font-family:var(--f-display);font-size:22px;font-weight:600}
+.portal .lbl small{font-family:var(--f-mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--sand-dim)}
+.note{font-size:13px;color:var(--sand-dim);border-left:2px solid var(--wall);padding-left:12px;margin-top:8px}
+
+/* ---------- Séjour (à compléter) ---------- */
+.stay{padding-block:clamp(56px,10vh,110px);padding-left:max(24px,env(safe-area-inset-left,0px));padding-right:max(24px,env(safe-area-inset-right,0px));background:var(--ink-2)}
+.stay-in{max-width:1180px;margin:0 auto}
+.cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px;margin-top:28px}
+.card{padding:22px;border-radius:14px;border:1px dashed var(--line);min-width:0}
+.card h4{margin:0 0 8px;font:600 18px/1.2 var(--f-display)}
+.card p{margin:0;color:var(--sand-dim);font-size:15px}
+.todo{display:inline-block;margin-top:12px;font:500 11px/1 var(--f-mono);letter-spacing:.1em;text-transform:uppercase;color:var(--wall);border:1px solid currentColor;border-radius:999px;padding:5px 9px}
+footer{padding-block:28px;padding-left:max(24px,env(safe-area-inset-left,0px));padding-right:max(24px,env(safe-area-inset-right,0px));display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;font-size:13px;color:var(--sand-dim);border-top:1px solid var(--line);background:var(--ink-2)}
+
+/* ---------- Téléphone ---------- */
+@media (max-width:760px){
+  .top{padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+  .brand span{display:none}
+  .top nav .btn:not(.solid){display:none}
+  .cap{padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+  .rail{display:none}
+  .bar{display:flex;position:absolute;z-index:3;left:max(16px,env(safe-area-inset-left,0px));right:max(16px,env(safe-area-inset-right,0px));top:calc(env(safe-area-inset-top,0px) + 72px);gap:4px}
+  .bar i{flex:1;height:2px;background:var(--line);border-radius:2px;overflow:hidden;position:relative}
+  .bar i b{position:absolute;inset:0;background:var(--sand);transform-origin:left;transform:scaleX(0)}
+  .free-in{grid-template-columns:minmax(0,1fr)}
+  .cards{grid-template-columns:minmax(0,1fr)}
+  .free,.stay{padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+}
+@media (prefers-reduced-motion:reduce){.hint i{animation:none}}
+</style>
+
+<header class="top">
+  <a class="brand" href="#top"><b>Le Rocher</b><span>Mvassa</span></a>
+  <nav>
+    <a class="btn" href="https://my.matterport.com/show/?m=r2jwHmgH1ga" target="_blank" rel="noopener">Visite 3D ↗</a>
+    <a class="btn solid" href="#sejour">Réserver</a>
+  </nav>
+</header>
+
+<main id="top">
+  <section class="tour" id="tour" aria-label="Balade dans le domaine">
+    <div class="stage">
+      <div class="shots" aria-hidden="true">
+        <div class="shot" style="background-image:url(img/s1.jpg)" data-from="1.02,0,0" data-to="1.16,0,-3"></div>
+        <div class="shot" style="background-image:url(img/s2.jpg)" data-from="1.04,-2,0" data-to="1.18,3,-2"></div>
+        <div class="shot" style="background-image:url(img/s3.jpg)" data-from="1.04,3,0" data-to="1.14,-3,1"></div>
+        <div class="shot" style="background-image:url(img/s4.jpg)" data-from="1.02,0,1" data-to="1.16,-2,-2"></div>
+        <div class="shot" style="background-image:url(img/s5.jpg)" data-from="1.12,-3,0" data-to="1.02,2,0"></div>
+        <div class="shot" style="background-image:url(img/s6.jpg)" data-from="1.02,0,0" data-to="1.15,0,-2"></div>
+      </div>
+
+      <div class="caps">
+        <article class="cap hero"><div class="cap-in">
+          <div class="k">Mvassa · Le Rocher</div>
+          <h2>Une piscine posée au-dessus de l'eau.</h2>
+          <p>Faites la visite du domaine en faisant défiler la page, de l'allée du jardin jusqu'au grand parc.</p>
+          <div class="hint"><i></i>Faites défiler pour entrer</div>
+        </div></article>
+        <article class="cap"><div class="cap-in">
+          <div class="k">Point de vue 02 · L'allée</div>
+          <h2>On arrive par le jardin.</h2>
+          <p>Un chemin de pierres plates entre les palmiers et les massifs fleuris mène jusqu'à la maison aux volets bleus.</p>
+        </div></article>
+        <article class="cap"><div class="cap-in">
+          <div class="k">Point de vue 03 · Le bassin</div>
+          <h2>Le bassin longe le large.</h2>
+          <p>La piscine suit le bord du rocher. Au bout, il n'y a plus que l'eau et l'horizon.</p>
+        </div></article>
+        <article class="cap"><div class="cap-in">
+          <div class="k">Point de vue 04 · La terrasse</div>
+          <h2>Transats, parasols, fin de journée.</h2>
+          <p>Les grands palmiers en pot font de l'ombre aux transats. C'est d'ici qu'on regarde le soleil se coucher sur l'eau.</p>
+        </div></article>
+        <article class="cap"><div class="cap-in">
+          <div class="k">Point de vue 05 · La maison</div>
+          <h2>Murs ocre, volets bleus.</h2>
+          <p>Arcades claires, enduit rose et volets bleu vif : la maison garde ses couleurs de bord de mer.</p>
+        </div></article>
+        <article class="cap"><div class="cap-in">
+          <div class="k">Point de vue 06 · Le parc</div>
+          <h2>Et derrière, tout un parc.</h2>
+          <p>Une grande pelouse plantée de palmiers, pour une sieste à l'ombre ou une partie de ballon avec les enfants.</p>
+        </div></article>
+      </div>
+
+      <ol class="rail" aria-label="Points de vue">
+        <li class="on"><button type="button" data-go="0"><span>Arrivée</span><em>01</em></button></li>
+        <li><button type="button" data-go="1"><span>L'allée</span><em>02</em></button></li>
+        <li><button type="button" data-go="2"><span>Le bassin</span><em>03</em></button></li>
+        <li><button type="button" data-go="3"><span>La terrasse</span><em>04</em></button></li>
+        <li><button type="button" data-go="4"><span>La maison</span><em>05</em></button></li>
+        <li><button type="button" data-go="5"><span>Le parc</span><em>06</em></button></li>
+      </ol>
+      <div class="bar" aria-hidden="true"><i><b></b></i><i><b></b></i><i><b></b></i><i><b></b></i><i><b></b></i></div>
+    </div>
+  </section>
+
+  <section class="free" id="visite">
+    <div class="free-in">
+      <div>
+        <div class="eyebrow">Visite libre</div>
+        <h3>Promenez-vous où vous voulez.</h3>
+        <p>La visite 3D vous laisse vous déplacer librement dans tout le domaine, à votre rythme, sur ordinateur comme sur téléphone.</p>
+        <a class="btn solid" href="https://my.matterport.com/show/?m=r2jwHmgH1ga" target="_blank" rel="noopener">Ouvrir la visite 3D ↗</a>
+        <p class="note">Prototype : sur le site final, la visite 3D s'affiche directement dans ce cadre, sans quitter la page.</p>
+      </div>
+      <a class="portal" href="https://my.matterport.com/show/?m=r2jwHmgH1ga" target="_blank" rel="noopener" aria-label="Ouvrir la visite 3D dans un nouvel onglet">
+        <span class="play"><svg viewBox="0 0 24 24" fill="#f3ebe1" aria-hidden="true"><path d="M8 5.5v13l10.5-6.5z"/></svg></span>
+        <span class="lbl"><b>Visite 3D du Rocher</b><small>Matterport · 360°</small></span>
+      </a>
+    </div>
+  </section>
+
+  <section class="stay" id="sejour">
+    <div class="stay-in">
+      <div class="eyebrow">Préparer votre séjour</div>
+      <h3>Venir au Rocher</h3>
+      <div class="cards">
+        <div class="card"><h4>Hébergement</h4><p>Types de chambres, capacité, équipements et tarifs.</p><span class="todo">Infos client à compléter</span></div>
+        <div class="card"><h4>Accès</h4><p>Adresse, plan d'accès, distance depuis l'aéroport et la ville.</p><span class="todo">Infos client à compléter</span></div>
+        <div class="card"><h4>Réservation</h4><p>Téléphone, e-mail, WhatsApp ou module de réservation en ligne.</p><span class="todo">Infos client à compléter</span></div>
+      </div>
+    </div>
+  </section>
+</main>
+<footer><span>Mvassa · Le Rocher</span><span>Prototype de site immersif · images issues de la visite 3D</span></footer>
+
+<script>
+(function(){
+  var track=document.getElementById('tour');
+  var shots=[].slice.call(track.querySelectorAll('.shot'));
+  var caps=[].slice.call(track.querySelectorAll('.cap'));
+  var railItems=[].slice.call(track.querySelectorAll('.rail li'));
+  var bars=[].slice.call(track.querySelectorAll('.bar b'));
+  var n=shots.length, STEP=1.2; // hauteur de scroll par point de vue, en écrans
+  var reduce=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var cams=shots.map(function(s){
+    var a=s.dataset.from.split(',').map(Number), b=s.dataset.to.split(',').map(Number);
+    return {a:a,b:b};
+  });
+  var clamp=function(v,lo,hi){return Math.max(lo,Math.min(hi,v))};
+  var ease=function(t){return t<.5?2*t*t:1-Math.pow(-2*t+2,2)/2};
+  var vh=0, span=0, ticking=false, last=-1;
+
+  function size(){
+    vh=window.innerHeight;
+    track.style.height=((n-1)*STEP*vh+vh)+'px';
+    span=(n-1)*STEP*vh;
+    render();
+  }
+  function progress(){
+    var top=track.getBoundingClientRect().top;
+    return clamp(-top/span,0,1)*(n-1);
+  }
+  function render(){
+    ticking=false;
+    var p=progress();
+    shots.forEach(function(s,i){
+      var op=i===0?1:ease(clamp((p-i+.38)/.38,0,1));
+      s.style.opacity=op;
+      if(!reduce){
+        var m=clamp((p-i+.38)/1.38,0,1), c=cams[i];
+        var sc=c.a[0]+(c.b[0]-c.a[0])*m, x=c.a[1]+(c.b[1]-c.a[1])*m, y=c.a[2]+(c.b[2]-c.a[2])*m;
+        s.style.transform='translate3d('+x+'%,'+y+'%,0) scale('+sc+')';
+      }
+    });
+    caps.forEach(function(c,i){
+      var d=p-i, ad=Math.abs(d);
+      var op=(i===0&&d<0)?1:1-clamp((ad-.1)/.22,0,1);
+      c.style.opacity=op;
+      c.style.transform=reduce?'none':'translate3d(0,'+(-d*70)+'px,0)';
+      c.style.visibility=op<.01?'hidden':'visible';
+    });
+    var cur=Math.round(p);
+    if(cur!==last){railItems.forEach(function(li,i){li.classList.toggle('on',i===cur)});last=cur;}
+    bars.forEach(function(b,i){b.style.transform='scaleX('+clamp(p-i,0,1)+')'});
+  }
+  function onScroll(){if(!ticking){ticking=true;requestAnimationFrame(render)}}
+  track.querySelectorAll('[data-go]').forEach(function(btn){
+    btn.addEventListener('click',function(){
+      var i=+btn.dataset.go, y=window.scrollY+track.getBoundingClientRect().top+i*STEP*vh;
+      window.scrollTo({top:y,behavior:reduce?'auto':'smooth'});
+    });
+  });
+  window.addEventListener('scroll',onScroll,{passive:true});
+  window.addEventListener('resize',size);
+  size();
+})();
+</script>

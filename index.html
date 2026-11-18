@@ -1,0 +1,320 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Mvassa Le Rocher</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=Instrument+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout : une scène plein écran collée (sticky) ; le scroll fait avancer la caméra d'un point de vue au suivant, comme une balade dans la visite 3D. */
+:root{
+  --ink:#0c1f26;        /* mer profonde, fond */
+  --ink-2:#14313b;
+  --sand:#f3ebe1;       /* texte */
+  --sand-dim:rgba(243,235,225,.74);
+  --shutter:#3a97dc;    /* bleu des volets */
+  --wall:#dba48f;       /* ocre rose des murs */
+  --line:rgba(243,235,225,.18);
+  --f-display:"Bricolage Grotesque", "Avenir Next", system-ui, sans-serif;
+  --f-body:"Instrument Sans", "Helvetica Neue", system-ui, sans-serif;
+  --f-mono:"IBM Plex Mono", ui-monospace, Menlo, monospace;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:auto}
+body{background:var(--ink);color:var(--sand);font-family:var(--f-body);font-size:16px;line-height:1.55;-webkit-font-smoothing:antialiased}
+a{color:inherit}
+:focus-visible{outline:2px solid var(--shutter);outline-offset:3px;border-radius:4px}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:30;background:var(--ink)}
+
+/* ---------- En-tête ---------- */
+.top{position:fixed;top:env(safe-area-inset-top,0px);left:0;right:0;z-index:20;display:flex;align-items:center;justify-content:space-between;gap:16px;
+  padding-block:18px;padding-left:max(24px,env(safe-area-inset-left,0px));padding-right:max(24px,env(safe-area-inset-right,0px));
+  background:linear-gradient(to bottom,rgba(12,31,38,.55),rgba(12,31,38,0))}
+.brand{display:flex;align-items:baseline;gap:10px;text-decoration:none}
+.brand b{font-family:var(--f-display);font-weight:800;font-size:22px;letter-spacing:-.02em}
+.brand span{font-family:var(--f-mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--wall)}
+.top nav{display:flex;gap:10px;align-items:center}
+.btn{display:inline-flex;align-items:center;gap:8px;font:500 14px/1 var(--f-body);text-decoration:none;padding:11px 16px;border-radius:999px;border:1px solid var(--line);background:rgba(12,31,38,.35);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);transition:background .2s,border-color .2s}
+.btn:hover{border-color:var(--sand)}
+.btn.solid{background:var(--shutter);border-color:var(--shutter);color:#fff}
+.btn.solid:hover{background:#2c86cb}
+
+/* ---------- Balade ---------- */
+.tour{position:relative}
+.stage{position:sticky;top:0;height:100vh;height:100svh;overflow:hidden;background:var(--ink)}
+.film{position:absolute;inset:0;width:100%;height:100%;display:block}
+.load{position:absolute;z-index:3;left:max(24px,env(safe-area-inset-left,0px));top:calc(env(safe-area-inset-top,0px) + 84px);font:500 11px/1 var(--f-mono);letter-spacing:.12em;text-transform:uppercase;color:var(--sand-dim);transition:opacity .6s}
+.load.done{opacity:0}
+.stage::after{content:"";position:absolute;inset:0;pointer-events:none;
+  background:linear-gradient(to top,rgba(12,31,38,.88) 0%,rgba(12,31,38,.25) 38%,rgba(12,31,38,0) 60%),
+             radial-gradient(120% 90% at 50% 40%,transparent 55%,rgba(12,31,38,.45) 100%)}
+
+.caps{position:absolute;inset:0;z-index:2;pointer-events:none}
+.cap{position:absolute;left:0;right:0;bottom:0;padding-bottom:clamp(40px,9vh,96px);
+  padding-left:max(24px,env(safe-area-inset-left,0px));padding-right:max(24px,env(safe-area-inset-right,0px));opacity:0}
+.cap:first-child{opacity:1}
+.cap-in{max-width:620px}
+.cap .k{font-family:var(--f-mono);font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--wall);display:flex;gap:12px;align-items:center}
+.cap .k::before{content:"";width:28px;height:1px;background:currentColor}
+.cap h2{font-family:var(--f-display);font-weight:800;font-size:clamp(36px,6.2vw,76px);line-height:.96;letter-spacing:-.03em;margin:14px 0 14px;text-wrap:balance}
+.cap p{margin:0;font-size:clamp(16px,1.35vw,19px);color:var(--sand-dim);max-width:52ch}
+.cap.hero .cap-in{max-width:980px}
+.cap.hero h2{font-size:clamp(44px,7.4vw,112px)}
+.caps::before{content:"";position:absolute;inset:0;background:linear-gradient(to right,rgba(12,31,38,.55),rgba(12,31,38,0) 55%);pointer-events:none}
+.hint{margin-top:26px;font-family:var(--f-mono);font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--sand-dim);display:flex;gap:10px;align-items:center}
+.hint i{width:1px;height:34px;background:linear-gradient(var(--sand),transparent);animation:drip 1.8s ease-in-out infinite}
+@keyframes drip{0%{transform:scaleY(.2);transform-origin:top}50%{transform:scaleY(1);transform-origin:top}100%{transform:scaleY(.2);transform-origin:bottom}}
+
+/* Parcours : la liste des points de vue */
+.rail{position:absolute;z-index:3;right:max(24px,env(safe-area-inset-right,0px));top:50%;transform:translateY(-50%);list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:4px}
+.rail li{display:flex;justify-content:flex-end}
+.rail button{all:unset;cursor:pointer;display:flex;align-items:center;justify-content:flex-end;gap:12px;padding:6px 0;font:500 12px/1 var(--f-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--sand-dim)}
+.rail button span{opacity:0;transform:translateX(6px);transition:opacity .25s,transform .25s}
+.rail button:hover span,.rail button:focus-visible span,.rail li.on span{opacity:1;transform:none}
+.rail button em{font-style:normal;width:26px;text-align:right;font-variant-numeric:tabular-nums}
+.rail button::after{content:"";width:8px;height:8px;border-radius:50%;border:1px solid var(--sand-dim);transition:all .25s}
+.rail li.on button{color:var(--sand)}
+.rail li.on button::after{background:var(--shutter);border-color:var(--shutter);transform:scale(1.35)}
+.bar{display:none}
+
+/* ---------- Visite libre ---------- */
+.free{position:relative;padding-block:clamp(72px,12vh,140px);padding-left:max(24px,env(safe-area-inset-left,0px));padding-right:max(24px,env(safe-area-inset-right,0px));background:var(--ink)}
+.free-in{max-width:1180px;margin:0 auto;display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:clamp(28px,5vw,72px);align-items:center}
+.eyebrow{font-family:var(--f-mono);font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--wall)}
+.free h3,.stay h3{font-family:var(--f-display);font-weight:800;font-size:clamp(32px,4.4vw,54px);line-height:1;letter-spacing:-.03em;margin:12px 0 16px;text-wrap:balance}
+.free p{color:var(--sand-dim);margin:0 0 24px;max-width:46ch}
+.portal{position:relative;display:block;aspect-ratio:16/10;max-width:100%;border-radius:18px;overflow:hidden;text-decoration:none;background:#000 url(img/s3.jpg) center/cover;isolation:isolate}
+.portal::before{content:"";position:absolute;inset:0;background:linear-gradient(to top,rgba(12,31,38,.85),rgba(12,31,38,.1) 60%);z-index:-1}
+.portal .play{position:absolute;left:50%;top:46%;transform:translate(-50%,-50%);width:84px;height:84px;border-radius:50%;background:rgba(243,235,225,.16);border:1px solid rgba(243,235,225,.6);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);display:grid;place-items:center;transition:transform .3s,background .3s}
+.portal:hover .play{transform:translate(-50%,-50%) scale(1.08);background:var(--shutter);border-color:var(--shutter)}
+.portal .play svg{width:30px;height:30px}
+.portal .lbl{position:absolute;left:22px;right:22px;bottom:20px;display:flex;justify-content:space-between;align-items:flex-end;gap:12px;flex-wrap:wrap}
+.portal .lbl b{font-family:var(--f-display);font-size:22px;font-weight:600}
+.portal .lbl small{font-family:var(--f-mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--sand-dim)}
+.note{font-size:13px;color:var(--sand-dim);border-left:2px solid var(--wall);padding-left:12px;margin-top:8px}
+
+/* ---------- Séjour (à compléter) ---------- */
+.stay{padding-block:clamp(56px,10vh,110px);padding-left:max(24px,env(safe-area-inset-left,0px));padding-right:max(24px,env(safe-area-inset-right,0px));background:var(--ink-2)}
+.stay-in{max-width:1180px;margin:0 auto}
+.cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px;margin-top:28px}
+.card{padding:22px;border-radius:14px;border:1px dashed var(--line);min-width:0}
+.card h4{margin:0 0 8px;font:600 18px/1.2 var(--f-display)}
+.card p{margin:0;color:var(--sand-dim);font-size:15px}
+.todo{display:inline-block;margin-top:12px;font:500 11px/1 var(--f-mono);letter-spacing:.1em;text-transform:uppercase;color:var(--wall);border:1px solid currentColor;border-radius:999px;padding:5px 9px}
+footer{padding-block:28px;padding-left:max(24px,env(safe-area-inset-left,0px));padding-right:max(24px,env(safe-area-inset-right,0px));display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;font-size:13px;color:var(--sand-dim);border-top:1px solid var(--line);background:var(--ink-2)}
+
+/* ---------- Téléphone ---------- */
+@media (max-width:760px){
+  .top{padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+  .brand span{display:none}
+  .top nav .btn:not(.solid){display:none}
+  .cap{padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+  .rail{display:none}
+  .bar{display:flex;position:absolute;z-index:3;left:max(16px,env(safe-area-inset-left,0px));right:max(16px,env(safe-area-inset-right,0px));top:calc(env(safe-area-inset-top,0px) + 72px);gap:4px}
+  .bar i{flex:1;height:2px;background:var(--line);border-radius:2px;overflow:hidden;position:relative}
+  .bar i b{position:absolute;inset:0;background:var(--sand);transform-origin:left;transform:scaleX(0)}
+  .free-in{grid-template-columns:minmax(0,1fr)}
+  .cards{grid-template-columns:minmax(0,1fr)}
+  .free,.stay{padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+}
+@media (prefers-reduced-motion:reduce){.hint i{animation:none}}
+</style>
+
+<header class="top">
+  <a class="brand" href="#top"><b>Le Rocher</b><span>Mvassa</span></a>
+  <nav>
+    <a class="btn" href="https://my.matterport.com/show/?m=r2jwHmgH1ga" target="_blank" rel="noopener">Visite 3D ↗</a>
+    <a class="btn solid" href="#sejour">Réserver</a>
+  </nav>
+</header>
+
+<main id="top">
+  <section class="tour" id="tour" aria-label="Balade dans le domaine">
+    <div class="stage">
+      <canvas class="film" aria-label="Vidéo de la visite du domaine, pilotée par le défilement"></canvas>
+      <div class="load" aria-live="polite">Chargement de la visite · <span>0</span>%</div>
+
+      <div class="caps">
+        <article class="cap hero" data-at="0,0"><div class="cap-in">
+          <div class="k">Mvassa · Le Rocher</div>
+          <h2>Une piscine posée au-dessus de l'eau.</h2>
+          <p>Faites défiler la page pour faire la visite du domaine : on passe le portail, on traverse le parc, puis on entre dans les chambres.</p>
+          <div class="hint"><i></i>Faites défiler pour entrer</div>
+        </div></article>
+        <article class="cap" data-at="2,19"><div class="cap-in">
+          <div class="k">Étape 02 · L'arrivée</div>
+          <h2>Le portail, puis l'allée.</h2>
+          <p>Passé le grand portail vert, une allée de sable file sous les palmiers et les grands arbres jusqu'au cœur du domaine.</p>
+        </div></article>
+        <article class="cap" data-at="23,60"><div class="cap-in">
+          <div class="k">Étape 03 · Le parc</div>
+          <h2>Un parc à perte de vue.</h2>
+          <p>Pelouses, palmiers, massifs et coins d'ombre : de quoi marcher, jouer ou faire la sieste.</p>
+        </div></article>
+        <article class="cap" data-at="64,82"><div class="cap-in">
+          <div class="k">Étape 04 · Les maisons</div>
+          <h2>Des maisons sous les fleurs.</h2>
+          <p>Les maisons ocre se cachent entre les bougainvilliers en fleurs.</p>
+        </div></article>
+        <article class="cap" data-at="87,114"><div class="cap-in">
+          <div class="k">Étape 05 · Les chambres</div>
+          <h2>Simples, fraîches, lumineuses.</h2>
+          <p>Lits en bois, murs clairs, climatisation : on pousse la porte et on pose ses valises.</p>
+        </div></article>
+        <article class="cap" data-at="118,136"><div class="cap-in">
+          <div class="k">Étape 06 · Cuisine et patio</div>
+          <h2>Cuisiner, manger dehors.</h2>
+          <p>Une cuisine équipée qui s'ouvre sur un patio planté, pour les repas à l'ombre.</p>
+        </div></article>
+        <article class="cap" data-at="141,224"><div class="cap-in">
+          <div class="k">Étape 07 · Chambres et salles d'eau</div>
+          <h2>Salles d'eau en mosaïque, arches et bois.</h2>
+          <p>Miroirs ronds, faïence colorée et portes en arcade : le soin du détail jusque dans les salles d'eau.</p>
+        </div></article>
+        <article class="cap" data-at="229,236"><div class="cap-in">
+          <div class="k">Étape 08 · Vue sur la mer</div>
+          <h2>Et sous l'arche, la mer.</h2>
+          <p>Au bout de la salle commune, l'arche s'ouvre sur la terrasse et l'eau. La suite, c'est en visite libre.</p>
+        </div></article>
+      </div>
+
+      <ol class="rail" aria-label="Étapes de la visite"></ol>
+      <div class="bar" aria-hidden="true"></div>
+    </div>
+  </section>
+
+  <section class="free" id="visite">
+    <div class="free-in">
+      <div>
+        <div class="eyebrow">Visite libre</div>
+        <h3>Promenez-vous où vous voulez.</h3>
+        <p>La visite 3D vous laisse vous déplacer librement dans tout le domaine, à votre rythme, sur ordinateur comme sur téléphone.</p>
+        <a class="btn solid" href="https://my.matterport.com/show/?m=r2jwHmgH1ga" target="_blank" rel="noopener">Ouvrir la visite 3D ↗</a>
+        <p class="note">Prototype : sur le site final, la visite 3D s'affiche directement dans ce cadre, sans quitter la page.</p>
+      </div>
+      <a class="portal" href="https://my.matterport.com/show/?m=r2jwHmgH1ga" target="_blank" rel="noopener" aria-label="Ouvrir la visite 3D dans un nouvel onglet">
+        <span class="play"><svg viewBox="0 0 24 24" fill="#f3ebe1" aria-hidden="true"><path d="M8 5.5v13l10.5-6.5z"/></svg></span>
+        <span class="lbl"><b>Visite 3D du Rocher</b><small>Matterport · 360°</small></span>
+      </a>
+    </div>
+  </section>
+
+  <section class="stay" id="sejour">
+    <div class="stay-in">
+      <div class="eyebrow">Préparer votre séjour</div>
+      <h3>Venir au Rocher</h3>
+      <div class="cards">
+        <div class="card"><h4>Hébergement</h4><p>Types de chambres, capacité, équipements et tarifs.</p><span class="todo">Infos client à compléter</span></div>
+        <div class="card"><h4>Accès</h4><p>Adresse, plan d'accès, distance depuis l'aéroport et la ville.</p><span class="todo">Infos client à compléter</span></div>
+        <div class="card"><h4>Réservation</h4><p>Téléphone, e-mail, WhatsApp ou module de réservation en ligne.</p><span class="todo">Infos client à compléter</span></div>
+      </div>
+    </div>
+  </section>
+</main>
+<footer><span>Mvassa · Le Rocher</span><span>Prototype de site immersif · vidéo enregistrée dans la visite 3D</span></footer>
+
+<script>
+(function(){
+  var COUNT=237, PX_PER_FRAME=26; // longueur de scroll par image
+  var NAMES=['Arrivée',"L'allée",'Le parc','Maisons','Chambres','Cuisine','Suites','La mer'];
+  var track=document.getElementById('tour');
+  var cv=track.querySelector('.film'), g=cv.getContext('2d');
+  var caps=[].slice.call(track.querySelectorAll('.cap'));
+  var ranges=caps.map(function(c){return c.dataset.at.split(',').map(Number)});
+  var rail=track.querySelector('.rail'), bar=track.querySelector('.bar');
+  var loadEl=track.querySelector('.load'), loadPct=loadEl.querySelector('span');
+  var reduce=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var clamp=function(v,lo,hi){return Math.max(lo,Math.min(hi,v))};
+
+  // Parcours : liste des étapes + barre téléphone
+  ranges.forEach(function(r,i){
+    var li=document.createElement('li');
+    li.innerHTML='<button type="button"><span>'+NAMES[i]+'</span><em>'+String(i+1).padStart(2,'0')+'</em></button>';
+    li.firstChild.addEventListener('click',function(){goTo(i===0?0:(r[0]+r[1])/2)});
+    rail.appendChild(li);
+    if(i>0){var s=document.createElement('i');s.appendChild(document.createElement('b'));bar.appendChild(s);}
+  });
+  var railItems=[].slice.call(rail.children), bars=[].slice.call(bar.querySelectorAll('b'));
+
+  // Chargement : d'abord le début, puis des passes de plus en plus fines
+  var imgs=new Array(COUNT), loaded=new Array(COUNT), nLoaded=0;
+  var order=[], seen={};
+  function push(i){if(i<COUNT&&!seen[i]){seen[i]=1;order.push(i)}}
+  for(var i=0;i<12;i++)push(i);
+  [16,8,4,2,1].forEach(function(st){for(var i=0;i<COUNT;i+=st)push(i)});
+  var inflight=0, next=0;
+  function pump(){
+    while(inflight<6&&next<order.length){
+      (function(i){
+        var im=new Image(); inflight++;
+        im.onload=function(){loaded[i]=true;nLoaded++;inflight--;done();};
+        im.onerror=function(){inflight--;done();};
+        im.src='seq/'+String(i).padStart(3,'0')+'.jpg'; imgs[i]=im;
+      })(order[next++]);
+    }
+  }
+  function done(){
+    loadPct.textContent=Math.round(nLoaded/COUNT*100);
+    if(nLoaded>=COUNT)loadEl.classList.add('done');
+    need=true; pump();
+  }
+  function nearest(f){
+    for(var d=0;d<COUNT;d++){
+      if(f-d>=0&&loaded[f-d])return f-d;
+      if(f+d<COUNT&&loaded[f+d])return f+d;
+    }
+    return -1;
+  }
+
+  // Dessin "cover" du canvas
+  var W=0,H=0,dpr=1,need=true,drawn=-1;
+  function size(){
+    dpr=Math.min(window.devicePixelRatio||1,2);
+    W=cv.clientWidth;H=cv.clientHeight;
+    cv.width=Math.round(W*dpr);cv.height=Math.round(H*dpr);
+    track.style.height=((COUNT-1)*PX_PER_FRAME+window.innerHeight)+'px';
+    need=true;
+  }
+  function draw(f){
+    var k=nearest(f); if(k<0)return;
+    if(k===drawn&&!need)return;
+    var im=imgs[k], iw=im.naturalWidth, ih=im.naturalHeight;
+    var s=Math.max(cv.width/iw,cv.height/ih), w=iw*s, h=ih*s;
+    g.drawImage(im,(cv.width-w)/2,(cv.height-h)/2,w,h);
+    drawn=k; need=false;
+  }
+
+  // Scroll -> image
+  var cur=0;
+  function target(){
+    var span=track.offsetHeight-window.innerHeight;
+    return clamp(-track.getBoundingClientRect().top/span,0,1)*(COUNT-1);
+  }
+  function goTo(f){
+    var y=window.scrollY+track.getBoundingClientRect().top+f*PX_PER_FRAME;
+    window.scrollTo({top:y,behavior:reduce?'auto':'smooth'});
+  }
+  var lastOn=-1;
+  function frame(){
+    var t=target();
+    cur=reduce?t:cur+(t-cur)*0.2;
+    if(Math.abs(t-cur)<0.02)cur=t;
+    draw(Math.round(cur));
+    var on=0;
+    caps.forEach(function(c,i){
+      var r=ranges[i], a=r[0], b=r[1], op;
+      if(i===0) op=1-clamp(cur/2,0,1);
+      else op=Math.min(clamp((cur-a+2)/2,0,1),clamp((b+2-cur)/2,0,1));
+      c.style.opacity=op;
+      c.style.visibility=op<.01?'hidden':'visible';
+      if(!reduce)c.style.transform='translate3d(0,'+((1-op)*24)+'px,0)';
+      if(cur>=a-2)on=i;
+    });
+    if(on!==lastOn){railItems.forEach(function(li,i){li.classList.toggle('on',i===on)});lastOn=on;}
+    bars.forEach(function(b,i){var r=ranges[i+1];b.style.transform='scaleX('+clamp((cur-r[0]+3)/(r[1]-r[0]+3),0,1)+')'});
+    requestAnimationFrame(frame);
+  }
+  window.addEventListener('resize',size);
+  size(); pump(); requestAnimationFrame(frame);
+})();
+</script>

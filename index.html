@@ -46,7 +46,10 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 /* ---------- Balade ---------- */
 .tour{position:relative}
 .stage{position:sticky;top:0;height:100vh;height:100svh;overflow:hidden;background:var(--ink)}
-.film{position:absolute;inset:0;width:100%;height:100%;display:block}
+.film{position:absolute;inset:0;width:100%;height:100%;display:block;object-fit:cover;transition:opacity .16s}
+.film.blink{opacity:0}
+.cover{position:absolute;inset:0;width:100%;height:100%;max-width:none;object-fit:cover;transition:opacity .6s}
+.cover.off{opacity:0}
 .load{position:absolute;z-index:3;left:max(24px,env(safe-area-inset-left,0px));top:calc(env(safe-area-inset-top,0px) + 84px);font:500 11px/1 var(--f-mono);letter-spacing:.12em;text-transform:uppercase;color:var(--sand-dim);transition:opacity .6s}
 .load.done{opacity:0}
 .stage::after{content:"";position:absolute;inset:0;pointer-events:none;
@@ -55,8 +58,8 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 
 .caps{position:absolute;inset:0;z-index:2;pointer-events:none}
 .cap{position:absolute;left:0;right:0;bottom:0;padding-bottom:clamp(40px,9vh,96px);
-  padding-left:max(24px,env(safe-area-inset-left,0px));padding-right:max(24px,env(safe-area-inset-right,0px));opacity:0}
-.cap:first-child{opacity:1}
+  padding-left:max(24px,env(safe-area-inset-left,0px));padding-right:max(24px,env(safe-area-inset-right,0px));opacity:0;visibility:hidden;transform:translateY(18px);transition:opacity .5s,transform .5s,visibility 0s .5s}
+.cap.on{opacity:1;visibility:visible;transform:none;transition:opacity .5s,transform .5s,visibility 0s}
 .cap-in{max-width:620px}
 .cap .k{font-family:var(--f-mono);font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--wall);display:flex;gap:12px;align-items:center}
 .cap .k::before{content:"";width:28px;height:1px;background:currentColor}
@@ -122,7 +125,7 @@ footer{padding-block:28px;padding-left:max(24px,env(safe-area-inset-left,0px));p
   .cards{grid-template-columns:minmax(0,1fr)}
   .free,.stay{padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
 }
-@media (prefers-reduced-motion:reduce){.hint i{animation:none}}
+@media (prefers-reduced-motion:reduce){.hint i{animation:none}.cap{transform:none}}
 </style>
 
 <header class="top">
@@ -137,50 +140,81 @@ footer{padding-block:28px;padding-left:max(24px,env(safe-area-inset-left,0px));p
 <main id="top">
   <section class="tour" id="tour" aria-label="Balade dans le domaine">
     <div class="stage">
-      <canvas class="film" aria-label="Vidéo de la visite du domaine, pilotée par le défilement"></canvas>
+      <video class="film" src="video/visite-720.mp4" poster="video/accueil.jpg" muted playsinline preload="auto" aria-label="Vidéo de la visite du domaine, qui avance quand on fait défiler la page"></video>
+      <img class="cover" src="video/accueil.jpg" alt="">
       <div class="load" aria-live="polite">Chargement de la visite · <span>0</span>%</div>
 
       <div class="caps">
-        <article class="cap hero" data-at="0,0"><div class="cap-in">
+        <article class="cap hero on" data-name="Accueil"><div class="cap-in">
           <div class="k">Mvassa · Le Rocher</div>
           <h2>Une piscine posée au-dessus de l'eau.</h2>
-          <p>Faites défiler la page pour faire la visite du domaine : on passe le portail, on traverse le parc, puis on entre dans les chambres.</p>
+          <p>Faites défiler la page pour faire la visite : le portail, le parc, les chambres, puis la terrasse, le bungalow sur le rocher et la mer.</p>
           <div class="hint"><i></i>Faites défiler pour entrer</div>
         </div></article>
-        <article class="cap" data-at="2,19"><div class="cap-in">
-          <div class="k">Étape 02 · L'arrivée</div>
+        <article class="cap" data-name="Arrivée" data-t="0,5.75"><div class="cap-in">
+          <div class="k">Étape 01 · L'arrivée</div>
           <h2>Le portail, puis l'allée.</h2>
-          <p>Passé le grand portail vert, une allée de sable file sous les palmiers et les grands arbres jusqu'au cœur du domaine.</p>
+          <p>Passé le grand portail vert, une allée de sable file sous les palmiers et les grands arbres.</p>
         </div></article>
-        <article class="cap" data-at="23,60"><div class="cap-in">
-          <div class="k">Étape 03 · Le parc</div>
+        <article class="cap" data-name="Parc" data-t="5.75,16.25"><div class="cap-in">
+          <div class="k">Étape 02 · Le parc</div>
           <h2>Un parc à perte de vue.</h2>
-          <p>Pelouses, palmiers, massifs et coins d'ombre : de quoi marcher, jouer ou faire la sieste.</p>
+          <p>Pelouses, palmiers et massifs : de quoi marcher, jouer ou faire la sieste à l'ombre.</p>
         </div></article>
-        <article class="cap" data-at="64,82"><div class="cap-in">
-          <div class="k">Étape 04 · Les maisons</div>
+        <article class="cap" data-name="Maisons" data-t="16.25,25.75"><div class="cap-in">
+          <div class="k">Étape 03 · Les maisons</div>
           <h2>Des maisons sous les fleurs.</h2>
-          <p>Les maisons ocre se cachent entre les bougainvilliers en fleurs.</p>
+          <p>Les maisons ocre se cachent entre les bougainvilliers.</p>
         </div></article>
-        <article class="cap" data-at="87,114"><div class="cap-in">
-          <div class="k">Étape 05 · Les chambres</div>
-          <h2>Simples, fraîches, lumineuses.</h2>
-          <p>Lits en bois, murs clairs, climatisation : on pousse la porte et on pose ses valises.</p>
+        <article class="cap" data-name="Patio" data-t="25.75,40.5"><div class="cap-in">
+          <div class="k">Étape 04 · Le patio</div>
+          <h2>Patio, chambres et cuisine.</h2>
+          <p>Autour d'un patio planté : des chambres fraîches aux lits en bois, et une cuisine équipée.</p>
         </div></article>
-        <article class="cap" data-at="118,136"><div class="cap-in">
-          <div class="k">Étape 06 · Cuisine et patio</div>
-          <h2>Cuisiner, manger dehors.</h2>
-          <p>Une cuisine équipée qui s'ouvre sur un patio planté, pour les repas à l'ombre.</p>
-        </div></article>
-        <article class="cap" data-at="141,224"><div class="cap-in">
-          <div class="k">Étape 07 · Chambres et salles d'eau</div>
-          <h2>Salles d'eau en mosaïque, arches et bois.</h2>
+        <article class="cap" data-name="Salles d'eau" data-t="40.5,51"><div class="cap-in">
+          <div class="k">Étape 05 · Chambres et salles d'eau</div>
+          <h2>Arches, mosaïques et bois.</h2>
           <p>Miroirs ronds, faïence colorée et portes en arcade : le soin du détail jusque dans les salles d'eau.</p>
         </div></article>
-        <article class="cap" data-at="229,236"><div class="cap-in">
-          <div class="k">Étape 08 · Vue sur la mer</div>
-          <h2>Et sous l'arche, la mer.</h2>
-          <p>Au bout de la salle commune, l'arche s'ouvre sur la terrasse et l'eau. La suite, c'est en visite libre.</p>
+        <article class="cap" data-name="Salle commune" data-t="51,55"><div class="cap-in">
+          <div class="k">Étape 06 · La salle commune</div>
+          <h2>Une grande table, la mer au bout.</h2>
+          <p>Dans la salle commune, l'arche s'ouvre directement sur la terrasse.</p>
+        </div></article>
+        <article class="cap" data-name="Terrasse" data-t="55,60.75"><div class="cap-in">
+          <div class="k">Étape 07 · La terrasse</div>
+          <h2>Parasols face à la mer.</h2>
+          <p>Salons de jardin et parasols : la terrasse donne directement sur l'eau.</p>
+        </div></article>
+        <article class="cap" data-name="Piscine" data-t="60.75,65.75"><div class="cap-in">
+          <div class="k">Étape 08 · La piscine</div>
+          <h2>La piscine longe le large.</h2>
+          <p>Elle suit le bord du rocher, entre les palmiers et la mer.</p>
+        </div></article>
+        <article class="cap" data-name="Jardin" data-t="65.75,76.75"><div class="cap-in">
+          <div class="k">Étape 09 · Le jardin</div>
+          <h2>Le chemin vers la mer.</h2>
+          <p>Un sentier de pierres traverse le jardin jusqu'au bord de l'eau.</p>
+        </div></article>
+        <article class="cap" data-name="Pavillon" data-t="76.75,90.75"><div class="cap-in">
+          <div class="k">Étape 10 · Le pavillon</div>
+          <h2>Le pavillon aux arcades.</h2>
+          <p>Sous ses arches, une grande table à l'abri du soleil, ouverte sur la mer.</p>
+        </div></article>
+        <article class="cap" data-name="Bungalow" data-t="90.75,105.25"><div class="cap-in">
+          <div class="k">Étape 11 · Le bungalow</div>
+          <h2>Un bungalow sur le rocher.</h2>
+          <p>Perché au-dessus des vagues, avec ses volets bleus et sa chambre aux couleurs du large.</p>
+        </div></article>
+        <article class="cap" data-name="Vagues" data-t="105.25,117.75"><div class="cap-in">
+          <div class="k">Étape 12 · Vue sur les vagues</div>
+          <h2>Dormir au bruit des vagues.</h2>
+          <p>Une grande baie vitrée sur l'eau et une salle d'eau en faïence bleue.</p>
+        </div></article>
+        <article class="cap" data-name="Le rocher" data-t="117.75,999"><div class="cap-in">
+          <div class="k">Étape 13 · Le rocher</div>
+          <h2>Et au bout, le rocher.</h2>
+          <p>Le sentier descend jusqu'aux rochers, face au soleil. La suite, c'est en visite libre.</p>
         </div></article>
       </div>
 
@@ -220,107 +254,122 @@ footer{padding-block:28px;padding-left:max(24px,env(safe-area-inset-left,0px));p
 <footer><span>Mvassa · Le Rocher</span><span>Prototype de site immersif · vidéo enregistrée dans la visite 3D</span></footer>
 
 <script>
+/* Lecture par chapitres : chaque cran de scroll joue le passage suivant de la vidéo
+   à vitesse normale, puis s'arrête en douceur sur l'étape. */
 (function(){
-  var COUNT=237, PX_PER_FRAME=26; // longueur de scroll par image
-  var NAMES=['Arrivée',"L'allée",'Le parc','Maisons','Chambres','Cuisine','Suites','La mer'];
+  var STEP=0.9; // hauteur de scroll par étape, en écrans
   var track=document.getElementById('tour');
-  var cv=track.querySelector('.film'), g=cv.getContext('2d');
+  var video=track.querySelector('.film'), cover=track.querySelector('.cover');
   var caps=[].slice.call(track.querySelectorAll('.cap'));
-  var ranges=caps.map(function(c){return c.dataset.at.split(',').map(Number)});
+  var chaps=caps.slice(1).map(function(c){return c.dataset.t.split(',').map(Number)});
   var rail=track.querySelector('.rail'), bar=track.querySelector('.bar');
   var loadEl=track.querySelector('.load'), loadPct=loadEl.querySelector('span');
   var reduce=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   var clamp=function(v,lo,hi){return Math.max(lo,Math.min(hi,v))};
+  var steps=caps.length; // 0 = accueil, puis une étape par chapitre
+  video.muted=true;
 
-  // Parcours : liste des étapes + barre téléphone
-  ranges.forEach(function(r,i){
+  caps.forEach(function(c,i){
     var li=document.createElement('li');
-    li.innerHTML='<button type="button"><span>'+NAMES[i]+'</span><em>'+String(i+1).padStart(2,'0')+'</em></button>';
-    li.firstChild.addEventListener('click',function(){goTo(i===0?0:(r[0]+r[1])/2)});
+    li.innerHTML='<button type="button"><span>'+c.dataset.name+'</span><em>'+String(i).padStart(2,'0')+'</em></button>';
+    li.firstChild.addEventListener('click',function(){goTo(i)});
     rail.appendChild(li);
     if(i>0){var s=document.createElement('i');s.appendChild(document.createElement('b'));bar.appendChild(s);}
   });
   var railItems=[].slice.call(rail.children), bars=[].slice.call(bar.querySelectorAll('b'));
 
-  // Chargement : d'abord le début, puis des passes de plus en plus fines
-  var imgs=new Array(COUNT), loaded=new Array(COUNT), nLoaded=0;
-  var order=[], seen={};
-  function push(i){if(i<COUNT&&!seen[i]){seen[i]=1;order.push(i)}}
-  for(var i=0;i<12;i++)push(i);
-  [16,8,4,2,1].forEach(function(st){for(var i=0;i<COUNT;i+=st)push(i)});
-  var inflight=0, next=0;
-  function pump(){
-    while(inflight<6&&next<order.length){
-      (function(i){
-        var im=new Image(); inflight++;
-        im.onload=function(){loaded[i]=true;nLoaded++;inflight--;done();};
-        im.onerror=function(){inflight--;done();};
-        im.src='seq/'+String(i).padStart(3,'0')+'.jpg'; imgs[i]=im;
-      })(order[next++]);
-    }
-  }
-  function done(){
-    loadPct.textContent=Math.round(nLoaded/COUNT*100);
-    if(nLoaded>=COUNT)loadEl.classList.add('done');
-    need=true; pump();
-  }
-  function nearest(f){
-    for(var d=0;d<COUNT;d++){
-      if(f-d>=0&&loaded[f-d])return f-d;
-      if(f+d<COUNT&&loaded[f+d])return f+d;
-    }
-    return -1;
-  }
-
-  // Dessin "cover" du canvas
-  var W=0,H=0,dpr=1,need=true,drawn=-1;
+  var vh=0;
   function size(){
-    dpr=Math.min(window.devicePixelRatio||1,2);
-    W=cv.clientWidth;H=cv.clientHeight;
-    cv.width=Math.round(W*dpr);cv.height=Math.round(H*dpr);
-    track.style.height=((COUNT-1)*PX_PER_FRAME+window.innerHeight)+'px';
-    need=true;
+    vh=window.innerHeight;
+    track.style.height=((steps-1)*STEP*vh+vh)+'px';
   }
-  function draw(f){
-    var k=nearest(f); if(k<0)return;
-    if(k===drawn&&!need)return;
-    var im=imgs[k], iw=im.naturalWidth, ih=im.naturalHeight;
-    var s=Math.max(cv.width/iw,cv.height/ih), w=iw*s, h=ih*s;
-    g.drawImage(im,(cv.width-w)/2,(cv.height-h)/2,w,h);
-    drawn=k; need=false;
+  function stepNow(){
+    var y=-track.getBoundingClientRect().top;
+    return clamp(Math.round(y/(STEP*vh)),0,steps-1);
   }
-
-  // Scroll -> image
-  var cur=0;
-  function target(){
-    var span=track.offsetHeight-window.innerHeight;
-    return clamp(-track.getBoundingClientRect().top/span,0,1)*(COUNT-1);
-  }
-  function goTo(f){
-    var y=window.scrollY+track.getBoundingClientRect().top+f*PX_PER_FRAME;
+  function goTo(i){
+    var y=window.scrollY+track.getBoundingClientRect().top+i*STEP*vh;
     window.scrollTo({top:y,behavior:reduce?'auto':'smooth'});
   }
-  var lastOn=-1;
-  function frame(){
-    var t=target();
-    cur=reduce?t:cur+(t-cur)*0.2;
-    if(Math.abs(t-cur)<0.02)cur=t;
-    draw(Math.round(cur));
-    var on=0;
+  function endOf(s){ // instant où s'arrête l'étape s
+    if(s===0)return 0;
+    var e=chaps[s-1][1];
+    return Math.min(e,(video.duration||e)-0.05);
+  }
+  function chapAt(t){
+    for(var i=chaps.length-1;i>=0;i--)if(t>=chaps[i][0]+0.08)return i+1;
+    return 1;
+  }
+
+  // Si le navigateur refuse la lecture automatique, on avance l'image à la main.
+  var manual=false, seeking=false, backTimer=null, lastT=performance.now();
+  function play(){
+    if(manual||!video.paused)return;
+    var p=video.play();
+    if(p&&p.catch)p.catch(function(){manual=true;});
+  }
+
+  var lastOn=-1, rate=1;
+  function frame(now){
+    var dt=Math.min(0.1,(now-lastT)/1000); lastT=now;
+    var s=stepNow(), target=endOf(s), t=video.currentTime;
+
+    if(!seeking){
+      if(reduce&&Math.abs(target-t)>0.05){seekTo(target);}
+      else if(target>t+0.04){
+        clearTimeout(backTimer);backTimer=null;
+        var ahead=chapAt(target-0.01)-chapAt(t);
+        if(ahead>=3){seekTo(chaps[s-1][0]+0.1);requestAnimationFrame(frame);return;}
+        rate=ahead<=0?1:1+ahead*0.75;
+        var left=target-t;
+        if(left<0.6*rate)rate=Math.max(0.3,left/0.6);
+        if(manual){video.currentTime=Math.min(target,t+dt*rate);}
+        else{video.playbackRate=rate;play();}
+      }else if(target<t-0.3){
+        if(!video.paused)video.pause();
+        if(!backTimer)backTimer=setTimeout(function(){backTimer=null;seekTo(endOf(stepNow()));},140);
+      }else{
+        if(!video.paused)video.pause();
+        rate=1;
+      }
+    }
+
+    // Image d'accueil, textes, parcours
+    var inHero=s===0&&t<0.2;
+    cover.classList.toggle('off',!inHero);
+    var k=inHero?0:chapAt(t);
+    var show=k===s||rate<=1.3;
     caps.forEach(function(c,i){
-      var r=ranges[i], a=r[0], b=r[1], op;
-      if(i===0) op=1-clamp(cur/2,0,1);
-      else op=Math.min(clamp((cur-a+2)/2,0,1),clamp((b+2-cur)/2,0,1));
-      c.style.opacity=op;
-      c.style.visibility=op<.01?'hidden':'visible';
-      if(!reduce)c.style.transform='translate3d(0,'+((1-op)*24)+'px,0)';
-      if(cur>=a-2)on=i;
+      var on=i===k&&show;
+      if(c._on!==on){c._on=on;c.classList.toggle('on',on);}
     });
-    if(on!==lastOn){railItems.forEach(function(li,i){li.classList.toggle('on',i===on)});lastOn=on;}
-    bars.forEach(function(b,i){var r=ranges[i+1];b.style.transform='scaleX('+clamp((cur-r[0]+3)/(r[1]-r[0]+3),0,1)+')'});
+    if(s!==lastOn){railItems.forEach(function(li,i){li.classList.toggle('on',i===s)});lastOn=s;}
+    bars.forEach(function(b,i){var c=chaps[i];b.style.transform='scaleX('+clamp((t-c[0])/(Math.min(c[1],video.duration||c[1])-c[0]),0,1)+')'});
     requestAnimationFrame(frame);
   }
+  function seekTo(time){
+    seeking=true; video.pause(); video.classList.add('blink');
+    setTimeout(function(){
+      video.currentTime=time;
+    },reduce?0:160);
+  }
+  video.addEventListener('seeked',function(){
+    if(!seeking)return;
+    seeking=false; video.classList.remove('blink');
+  });
+
+  // Indicateur de chargement
+  function progress(){
+    if(!video.duration)return;
+    var b=video.buffered, end=b.length?b.end(b.length-1):0;
+    var pct=Math.round(end/video.duration*100);
+    loadPct.textContent=pct;
+    if(pct>=99)loadEl.classList.add('done');
+  }
+  video.addEventListener('progress',progress);
+  video.addEventListener('canplaythrough',function(){loadEl.classList.add('done')});
+
   window.addEventListener('resize',size);
-  size(); pump(); requestAnimationFrame(frame);
+  size(); requestAnimationFrame(frame);
 })();
 </script>

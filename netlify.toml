@@ -3,7 +3,7 @@
 
 # Les images de la visite ne changent pas : on les garde en cache longtemps.
 [[headers]]
-  for = "/seq/*"
+  for = "/video/*"
   [headers.values]
     Cache-Control = "public, max-age=31536000, immutable"
 
